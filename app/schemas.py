@@ -10,6 +10,16 @@ class AuditRequest(BaseModel):
     max_queries: int = Field(default=10, ge=1, le=50)
 
 
+class CompetitorCompareRequest(BaseModel):
+    target_url: HttpUrl
+    competitor_urls: list[HttpUrl] = Field(min_length=1, max_length=5)
+    queries: list[str] | None = Field(
+        default=None,
+        description="Optional query cluster to compare against.",
+    )
+    max_queries: int = Field(default=10, ge=1, le=50)
+
+
 class PageSnapshot(BaseModel):
     url: str
     title: str | None = None
@@ -52,6 +62,22 @@ class GasComponents(BaseModel):
     instruction_following_weight: float = Field(ge=0, le=1)
     semantic_similarity: float = Field(ge=-1, le=1)
     gas: float = Field(ge=0, le=100)
+
+
+class CompetitorResult(BaseModel):
+    url: str
+    title: str | None = None
+    semantic_similarity: float = Field(ge=-1, le=1)
+    content_length: int
+    coverage_delta: float
+    rank: int
+
+
+class CompetitorCompareResponse(BaseModel):
+    target: CompetitorResult
+    competitors: list[CompetitorResult]
+    queries: list[str]
+    winner_url: str
 
 
 class AuditResponse(BaseModel):

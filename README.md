@@ -51,6 +51,20 @@ Invoke-RestMethod `
   -Body '{"target_url":"https://example.com","max_queries":5}'
 ```
 
+## Compare Competitors
+
+Use `/competitors/compare` to compare your page against up to five competitor URLs.
+The endpoint builds or accepts a query cluster, creates the ideal generative answer,
+embeds each page against that answer, and ranks pages by semantic coverage.
+
+```powershell
+Invoke-RestMethod `
+  -Method Post `
+  -Uri http://127.0.0.1:8000/competitors/compare `
+  -ContentType application/json `
+  -Body '{"target_url":"https://example.com","competitor_urls":["https://example.org"],"max_queries":5}'
+```
+
 ## Notes
 
 - `OPENAI_MAX_CITATION_TESTS` caps citation-test calls so early runs do not fan out unexpectedly.

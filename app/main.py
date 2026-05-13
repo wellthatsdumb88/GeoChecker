@@ -2,8 +2,14 @@ from fastapi import Depends, FastAPI, HTTPException
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.schemas import AuditRequest, AuditResponse
+from app.schemas import (
+    AuditRequest,
+    AuditResponse,
+    CompetitorCompareRequest,
+    CompetitorCompareResponse,
+)
 from app.services.audit import run_audit
+from app.services.competitors import compare_competitors
 from app.storage.database import get_session, init_db
 from app.storage.models import AuditRecord
 
@@ -29,6 +35,21 @@ async def create_audit(
         return await run_audit(
             target_url=str(request.target_url),
             db=db,
+            queries=request.queries,
+            max_queries=request.max_queries,
+        )
+    except RuntimeError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
+@app.post("/competitors/compare", response_model=CompetitorCompareResponse)
+async def create_competitor_comparison(
+    request: CompetitorCompareRequest,
+) -> CompetitorCompareResponse:
+    try:
+        return await compare_competitors(
+            target_url=str(request.target_url),
+            competitor_urls=[str(url) for url in request.competitor_urls],
             queries=request.queries,
             max_queries=request.max_queries,
         )
