@@ -1,4 +1,4 @@
-# GEO Authority Auditor
+# GeoChecker
 
 FastAPI prototype for the phased GEO audit flow:
 
